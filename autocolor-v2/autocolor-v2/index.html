@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoColor — Visualizador de Cores</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+  <h1>AutoColor</h1>
+  <span>Visualizador de Cores para Veículos</span>
+</header>
+
+<div class="layout">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+
+    <div>
+      <div class="section-label">Marca</div>
+      <select id="brand" onchange="updateModels()">
+        <option value="">Selecione a marca</option>
+        <option>Fiat</option>
+        <option>Volkswagen</option>
+        <option>Chevrolet</option>
+        <option>Toyota</option>
+        <option>Honda</option>
+        <option>Hyundai</option>
+        <option>Renault</option>
+        <option>Jeep</option>
+        <option>Nissan</option>
+        <option>Ford</option>
+      </select>
+    </div>
+
+    <div>
+      <div class="section-label">Modelo</div>
+      <select id="model" onchange="updateYears()" disabled>
+        <option value="">Selecione o modelo</option>
+      </select>
+    </div>
+
+    <div>
+      <div class="section-label">Ano</div>
+      <select id="year" onchange="loadColors()" disabled>
+        <option value="">Selecione o ano</option>
+      </select>
+    </div>
+
+    <div id="colors-section" style="display:none">
+      <div class="section-label">Cores Disponíveis</div>
+      <div class="color-grid" id="color-grid"></div>
+    </div>
+
+    <div id="selected-display" style="display:none">
+      <div class="section-label">Cor Selecionada</div>
+      <div class="selected-color-info">
+        <div class="selected-color-dot" id="sel-dot"></div>
+        <div>
+          <div class="color-name" id="sel-name">—</div>
+          <div class="color-type" id="sel-type">—</div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ===== MAIN PANEL ===== -->
+  <main class="main-panel">
+
+    <!-- Info Bar -->
+    <div id="car-info-bar" style="display:none" class="car-info-bar">
+      <div class="info-chip">
+        <span class="label">Marca</span>
+        <span class="value" id="info-brand">—</span>
+      </div>
+      <div class="divider"></div>
+      <div class="info-chip">
+        <span class="label">Modelo</span>
+        <span class="value" id="info-model">—</span>
+      </div>
+      <div class="divider"></div>
+      <div class="info-chip">
+        <span class="label">Ano</span>
+        <span class="value" id="info-year">—</span>
+      </div>
+      <div class="divider"></div>
+      <div class="info-chip">
+        <span class="label">Cores</span>
+        <span class="value" id="info-count">—</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('preview', this)">Foto do Modelo</button>
+      <button class="tab" onclick="switchTab('camera', this)">Câmera ao Vivo</button>
+    </div>
+
+    <!-- ===== TAB: FOTO DO MODELO ===== -->
+    <div id="tab-preview" class="tab-panel active">
+
+      <div class="car-preview">
+        <!-- Estado vazio -->
+        <div class="empty-state" id="preview-empty">
+          <svg width="60" height="60" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="24" width="48" height="22" rx="4" stroke="#888" stroke-width="2"/>
+            <path d="M16 24L22 14h20l6 10" stroke="#888" stroke-width="2" stroke-linejoin="round"/>
+            <circle cx="18" cy="46" r="6" stroke="#888" stroke-width="2"/>
+            <circle cx="46" cy="46" r="6" stroke="#888" stroke-width="2"/>
+          </svg>
+          Selecione marca, modelo e ano para ver a foto
+        </div>
+
+        <!-- Loading -->
+        <div class="preview-loading" id="preview-loading">
+          <div class="spinner"></div>
+          Buscando foto do modelo...
+        </div>
+
+        <!-- Canvas com a foto real + overlay de cor -->
+        <div id="car-photo-wrap">
+          <canvas id="car-canvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Controle de intensidade -->
+      <div class="opacity-control" id="opacity-ctrl" style="display:none">
+        <label>Intensidade</label>
+        <input type="range" id="preview-opacity" min="0" max="100" value="55" step="1"
+               oninput="setPreviewOpacity(this.value)">
+        <span class="opacity-value" id="preview-opacity-val">55%</span>
+      </div>
+
+      <!-- Blend modes -->
+      <div class="blend-ctrl" id="blend-ctrl" style="display:none">
+        <label>Modo</label>
+        <button class="blend-btn" onclick="setBlendMode('color', this)">Colorir</button>
+        <button class="blend-btn active" onclick="setBlendMode('multiply', this)">Multiply</button>
+        <button class="blend-btn" onclick="setBlendMode('overlay', this)">Overlay</button>
+        <button class="blend-btn" onclick="setBlendMode('hue', this)">Matiz</button>
+        <button class="blend-btn" onclick="setBlendMode('soft-light', this)">Suave</button>
+      </div>
+
+    </div>
+
+    <!-- ===== TAB: CÂMERA ===== -->
+    <div id="tab-camera" class="tab-panel">
+
+      <div class="camera-area">
+        <div class="camera-idle" id="cam-idle">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="14" width="44" height="30" rx="5" stroke="#888" stroke-width="2"/>
+            <circle cx="26" cy="29" r="8" stroke="#888" stroke-width="2"/>
+            <circle cx="26" cy="29" r="3" fill="#888"/>
+            <path d="M18 14l3-5h10l3 5" stroke="#888" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+          <p>Ative a câmera e aponte para seu veículo</p>
+        </div>
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="canvas-output"></canvas>
+        <div class="live-badge" id="live-badge" style="display:none">
+          <div class="live-dot"></div>AO VIVO
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn primary" id="btn-start" onclick="startCamera()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <rect x="1" y="3" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.4"/>
+            <circle cx="7" cy="7.5" r="2.2" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M5 3l.8-1.5h2.4L9 3" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+          </svg>
+          Ativar Câmera
+        </button>
+        <button class="btn" onclick="capturePhoto()" id="btn-capture" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/>
+            <circle cx="7" cy="7" r="2" fill="currentColor"/>
+          </svg>
+          Capturar
+        </button>
+        <button class="btn" onclick="applyCameraColor()" id="btn-apply" style="display:none">Aplicar Cor</button>
+        <button class="btn" onclick="resetCamera()" id="btn-reset" style="display:none">Reiniciar</button>
+      </div>
+
+      <div class="cam-controls" id="cam-controls" style="display:none">
+        <h3>Modo de mistura</h3>
+        <div class="cam-blend-row">
+          <button class="blend-btn cam-blend-btn active" onclick="setCamBlend('multiply', this)">Multiply</button>
+          <button class="blend-btn cam-blend-btn" onclick="setCamBlend('color', this)">Colorir</button>
+          <button class="blend-btn cam-blend-btn" onclick="setCamBlend('overlay', this)">Overlay</button>
+          <button class="blend-btn cam-blend-btn" onclick="setCamBlend('hue', this)">Matiz</button>
+          <button class="blend-btn cam-blend-btn" onclick="setCamBlend('soft-light', this)">Suave</button>
+        </div>
+        <div class="opacity-control" style="border:none; padding:0; background:transparent">
+          <label>Opacidade</label>
+          <input type="range" id="cam-opacity" min="0" max="100" value="55" step="1"
+                 oninput="applyCameraColor()">
+          <span class="opacity-value" id="cam-opacity-val">55%</span>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/preview.js"></script>
+<script src="js/camera.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
