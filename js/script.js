@@ -1,18 +1,24 @@
-// ============================================================
-// AutoColor — script.js (VERSÃO LIMPA E FUNCIONAL)
-// ============================================================
-
 const API = './api/buscar_cores.php';
 
+// ============================================================
 // DOM
+// ============================================================
+
 const selMarca     = document.getElementById('marca');
 const selModelo    = document.getElementById('modelo');
 const selAno       = document.getElementById('ano');
+
 const btnBuscar    = document.getElementById('btn-buscar');
+
+// 🔥 NOVO (CÓDIGO DA COR)
+const inputCodigo  = document.getElementById('codigo');
+const btnCodigo    = document.getElementById('btn-codigo');
+
 const secResultado = document.getElementById('resultado');
 const gridCores    = document.getElementById('grid-cores');
 const txtTitulo    = document.getElementById('titulo-resultado');
 const txtContagem  = document.getElementById('contagem');
+
 const loader       = document.getElementById('loader');
 const msgErro      = document.getElementById('msg-erro');
 
@@ -39,6 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     btnBuscar.addEventListener('click', buscarCores);
+
+    // 🔥 NOVO EVENTO
+    btnCodigo.addEventListener('click', buscarPorCodigo);
 });
 
 // ============================================================
@@ -66,9 +75,7 @@ async function carregarModelos(marca) {
         const modelosSet = new Set();
 
         dados.forEach(item => {
-            item.split(',').forEach(m => {
-                modelosSet.add(m.trim());
-            });
+            item.split(',').forEach(m => modelosSet.add(m.trim()));
         });
 
         resetarSelect(selModelo, 'Selecione o modelo');
@@ -103,10 +110,11 @@ async function carregarAnos(marca, modelo) {
 }
 
 // ============================================================
-// BUSCA
+// BUSCA POR VEÍCULO
 // ============================================================
 
 async function buscarCores() {
+
     if (!selMarca.value || !selModelo.value) {
         mostrarErro('Selecione marca e modelo');
         return;
@@ -133,18 +141,54 @@ async function buscarCores() {
 }
 
 // ============================================================
+// 🔥 BUSCA POR CÓDIGO DE FÁBRICA (NOVO)
+// ============================================================
+
+async function buscarPorCodigo() {
+
+    const codigo = inputCodigo.value.trim();
+
+    if (!codigo) {
+        mostrarErro('Digite um código de fábrica');
+        return;
+    }
+
+    mostrarLoader(true);
+
+    try {
+        const cores = await chamarAPI({
+            acao: 'codigo',
+            codigo: codigo
+        });
+
+        renderizarCores(cores);
+
+    } catch (e) {
+        mostrarErro(e.message);
+    } finally {
+        mostrarLoader(false);
+    }
+}
+
+// ============================================================
 // RENDER
 // ============================================================
 
 function renderizarCores(cores) {
+
     gridCores.innerHTML = '';
 
-    txtTitulo.textContent = `${selMarca.value} ${selModelo.value}`;
+    txtTitulo.textContent =
+        cores[0]?.marca
+        ? `${cores[0].marca} ${cores[0].modelo}`
+        : 'Resultado';
+
     txtContagem.textContent = `${cores.length} cores encontradas`;
 
     const grupos = agruparPorTipo(cores);
 
     for (const tipo in grupos) {
+
         const titulo = document.createElement('h3');
         titulo.textContent = tipo;
         gridCores.appendChild(titulo);
@@ -162,7 +206,12 @@ function renderizarCores(cores) {
     secResultado.classList.remove('oculto');
 }
 
+// ============================================================
+// CARD
+// ============================================================
+
 function criarCardCor({ cor, hex, tipo }) {
+
     const card = document.createElement('div');
     card.className = 'card-cor';
 
@@ -238,6 +287,7 @@ function corTextoContraste(hex) {
 // ============================================================
 
 async function chamarAPI(params) {
+
     const url = `${API}?${new URLSearchParams(params)}`;
 
     const res = await fetch(url);

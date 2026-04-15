@@ -13,11 +13,12 @@
     <!-- Estilos -->
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-<!-- ===================================================
-     CABEÇALHO
-     =================================================== -->
+<!-- =================================================== -->
+<!-- CABEÇALHO -->
+<!-- =================================================== -->
 <header>
     <div class="header-logo">
         <div class="logo-icon">🎨</div>
@@ -26,18 +27,19 @@
     <p class="header-subtitle">Consulta de Cores para Veículos</p>
 </header>
 
-<!-- ===================================================
-     CONTEÚDO PRINCIPAL
-     =================================================== -->
+<!-- =================================================== -->
+<!-- CONTEÚDO PRINCIPAL -->
+<!-- =================================================== -->
 <main class="container">
 
-    <!-- Painel de busca -->
+    <!-- =================================================== -->
+    <!-- BUSCA POR VEÍCULO -->
+    <!-- =================================================== -->
     <section class="painel-busca">
-        <h2>Consultar Cores</h2>
+        <h2>Consultar Cores por Veículo</h2>
 
         <div class="form-grid">
 
-            <!-- Select: Marca -->
             <div class="campo">
                 <label for="marca">Marca</label>
                 <select id="marca" name="marca">
@@ -45,7 +47,6 @@
                 </select>
             </div>
 
-            <!-- Select: Modelo -->
             <div class="campo">
                 <label for="modelo">Modelo</label>
                 <select id="modelo" name="modelo" disabled>
@@ -53,15 +54,13 @@
                 </select>
             </div>
 
-            <!-- Select: Ano (opcional) -->
             <div class="campo">
-                <label for="ano">Ano <span style="color:var(--text-hint);font-size:10px;">(opcional)</span></label>
+                <label for="ano">Ano (opcional)</label>
                 <select id="ano" name="ano" disabled>
                     <option value="">Todos os anos</option>
                 </select>
             </div>
 
-            <!-- Botão -->
             <div class="campo">
                 <label>&nbsp;</label>
                 <button class="btn-buscar" id="btn-buscar" type="button">
@@ -70,22 +69,46 @@
                 </button>
             </div>
 
-        </div><!-- /.form-grid -->
-
-        <!-- Loader -->
-        <div id="loader" class="oculto">
-            <div class="spinner"></div>
-            Buscando cores...
         </div>
+    </section>
 
-        <!-- Mensagem de erro -->
-        <p id="msg-erro" class="oculto" role="alert"></p>
+    <!-- =================================================== -->
+    <!-- 🔥 NOVO: BUSCA POR CÓDIGO DA COR -->
+    <!-- =================================================== -->
+    <section class="painel-busca" style="margin-top:20px;">
+        <h2>Consultar por Código da Cor</h2>
 
-    </section><!-- /.painel-busca -->
+        <div class="form-grid">
 
-    <!-- ===================================================
-         RESULTADO
-         =================================================== -->
+            <div class="campo">
+                <label for="codigo">Código de Fábrica</label>
+                <input type="text" id="codigo" placeholder="Ex: LY3D, LB5N, 083">
+            </div>
+
+            <div class="campo">
+                <label>&nbsp;</label>
+                <button class="btn-buscar" id="btn-codigo" type="button">
+                    🔎 Buscar Código
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- LOADER -->
+    <!-- =================================================== -->
+    <div id="loader" class="oculto">
+        <div class="spinner"></div>
+        Buscando cores...
+    </div>
+
+    <!-- ERRO -->
+    <p id="msg-erro" class="oculto" role="alert"></p>
+
+    <!-- =================================================== -->
+    <!-- RESULTADO -->
+    <!-- =================================================== -->
     <section id="resultado" class="oculto" aria-live="polite">
 
         <div class="resultado-header">
@@ -93,21 +116,20 @@
             <span id="contagem">—</span>
         </div>
 
-        <!-- Grid de cores (populado via JS) -->
         <div id="grid-cores"></div>
 
     </section>
 
-</main><!-- /.container -->
+</main>
 
-<!-- ===================================================
-     RODAPÉ
-     =================================================== -->
+<!-- =================================================== -->
+<!-- RODAPÉ -->
+<!-- =================================================== -->
 <footer>
-    AutoColor &copy; 2024 &nbsp;·&nbsp; Desenvolvido com PHP + MySQL + JS puro
+    AutoColor &copy; 2024 · Sistema de Cores Automotivas
 </footer>
 
-<!-- Scripts (no final do body para melhor performance) -->
+<!-- SCRIPT -->
 <script src="js/script.js"></script>
 
 </body>

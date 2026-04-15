@@ -1,6 +1,6 @@
 <?php
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'autocolor');
+define('DB_NAME', 'autocolor final');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_CHAR', 'utf8mb4');

@@ -13,6 +13,8 @@ $pdo = getConexao();
 
 try {
 
+
+
     switch ($acao) {
 
         // ====================================================
@@ -75,6 +77,31 @@ try {
             ]);
         break;
 
+
+        case 'codigo':
+
+    $codigo = $_GET['codigo'] ?? '';
+
+    $stmt = $pdo->prepare("
+        SELECT 
+            nome AS cor,
+            hex,
+            tipo,
+            marca,
+            modelo,
+            ano
+        FROM cores
+        WHERE codigo_fabrica = ?
+    ");
+
+    $stmt->execute([$codigo]);
+
+    echo json_encode([
+        'sucesso' => true,
+        'dados' => $stmt->fetchAll(PDO::FETCH_ASSOC)
+    ]);
+
+break;
         // ====================================================
         // 🔵 BUSCAR CORES
         // ====================================================
@@ -120,9 +147,12 @@ try {
             ]);
     }
 
+    
+
 } catch (Exception $e) {
     echo json_encode([
         'sucesso' => false,
         'erro' => $e->getMessage()
     ]);
 }
+
