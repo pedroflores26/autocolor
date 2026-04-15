@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoColor — Consulta de Cores de Veículos</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===================================================
+     CABEÇALHO
+     =================================================== -->
+<header>
+    <div class="header-logo">
+        <div class="logo-icon">🎨</div>
+        <h1>AutoColor</h1>
+    </div>
+    <p class="header-subtitle">Consulta de Cores para Veículos</p>
+</header>
+
+<!-- ===================================================
+     CONTEÚDO PRINCIPAL
+     =================================================== -->
+<main class="container">
+
+    <!-- Painel de busca -->
+    <section class="painel-busca">
+        <h2>Consultar Cores</h2>
+
+        <div class="form-grid">
+
+            <!-- Select: Marca -->
+            <div class="campo">
+                <label for="marca">Marca</label>
+                <select id="marca" name="marca">
+                    <option value="">Carregando marcas...</option>
+                </select>
+            </div>
+
+            <!-- Select: Modelo -->
+            <div class="campo">
+                <label for="modelo">Modelo</label>
+                <select id="modelo" name="modelo" disabled>
+                    <option value="">Selecione a marca primeiro</option>
+                </select>
+            </div>
+
+            <!-- Select: Ano (opcional) -->
+            <div class="campo">
+                <label for="ano">Ano <span style="color:var(--text-hint);font-size:10px;">(opcional)</span></label>
+                <select id="ano" name="ano" disabled>
+                    <option value="">Todos os anos</option>
+                </select>
+            </div>
+
+            <!-- Botão -->
+            <div class="campo">
+                <label>&nbsp;</label>
+                <button class="btn-buscar" id="btn-buscar" type="button">
+                    <span class="btn-icon">🔍</span>
+                    <span class="btn-texto">Buscar Cores</span>
+                </button>
+            </div>
+
+        </div><!-- /.form-grid -->
+
+        <!-- Loader -->
+        <div id="loader" class="oculto">
+            <div class="spinner"></div>
+            Buscando cores...
+        </div>
+
+        <!-- Mensagem de erro -->
+        <p id="msg-erro" class="oculto" role="alert"></p>
+
+    </section><!-- /.painel-busca -->
+
+    <!-- ===================================================
+         RESULTADO
+         =================================================== -->
+    <section id="resultado" class="oculto" aria-live="polite">
+
+        <div class="resultado-header">
+            <h2 id="titulo-resultado">—</h2>
+            <span id="contagem">—</span>
+        </div>
+
+        <!-- Grid de cores (populado via JS) -->
+        <div id="grid-cores"></div>
+
+    </section>
+
+</main><!-- /.container -->
+
+<!-- ===================================================
+     RODAPÉ
+     =================================================== -->
+<footer>
+    AutoColor &copy; 2024 &nbsp;·&nbsp; Desenvolvido com PHP + MySQL + JS puro
+</footer>
+
+<!-- Scripts (no final do body para melhor performance) -->
+<script src="js/script.js"></script>
+
+</body>
+</html>
